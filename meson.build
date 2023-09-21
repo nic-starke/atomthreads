@@ -11,8 +11,6 @@ atomthreads_sources = files(
   'ports/avr/atomport-asm.s'
 )
 
-DATOM_STACK_CHECKING
-
 add_project_arguments('-DATOM_STACK_CHECKING', language : 'c')
 
 atomthreads_inc = include_directories('./kernel', './ports/avr', './tests')
