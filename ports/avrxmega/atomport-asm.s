@@ -129,9 +129,9 @@ archContextSwitch:
      * save RAMPZ under those circumstances.
      */
 #ifdef __AVR_3_BYTE_PC__
-    in r0, _SFR_IO_ADDR(RAMPZ)
+    in r0, RAMPZ
     push r0
-    in r0, _SFR_IO_ADDR(EIND)
+    in r0, EIND
     push r0
 #endif
 
@@ -142,8 +142,8 @@ archContextSwitch:
      * careful not to use R23-R22, however, as these still contain the
      * other parameter, new_tcb_ptr.
      */
-    in  r16,_SFR_IO_ADDR(SPL)  /* Get the current SP into general regs */
-    in  r17,_SFR_IO_ADDR(SPH)  /* R16/R17 which are now free to use. */
+    in  r16,SPL         /* Get the current SP into general regs */
+    in  r17,SPH         /* R16/R17 which are now free to use. */
 
     mov r28,r24         /* Move old_tcb_ptr param into the Y-regs so we */
     mov r29,r25         /* can access the TCB via a pointer. */
@@ -227,17 +227,17 @@ archContextSwitch:
     ld r16,Y            /* Load new_tcb_ptr->sp_save_ptr into R16/R17. */
     ldd r17,Y+1         /* It is conveniently the first member of the TCB. */
 
-    out _SFR_IO_ADDR(SPL),r16  /* Set our stack pointer to the new thread's */
-    out _SFR_IO_ADDR(SPH),r17  /* stack pointer, from its TCB. */
+    out SPL,r16  /* Set our stack pointer to the new thread's */
+    out SPH,r17  /* stack pointer, from its TCB. */
 
     /**
      * On devices with large program space we also restore RAMPZ, EIND.
      */
 #ifdef __AVR_3_BYTE_PC__
     pop r0
-    in r0,_SFR_IO_ADDR(EIND)
+    in r0,EIND
     pop r0
-    in r0,_SFR_IO_ADDR(RAMPZ)
+    in r0,RAMPZ
 #endif
 
     /**
@@ -355,17 +355,17 @@ archFirstThreadRestore:
     ld r16,Y            /* Load new_tcb_ptr->sp_save_ptr into R16/R17. */
     ldd r17,Y+1         /* It is conveniently the first member of the TCB. */
 
-    out _SFR_IO_ADDR(SPL),r16  /* Set our stack pointer to the new thread's */
-    out _SFR_IO_ADDR(SPH),r17  /* stack pointer, from its TCB. */
+    out SPL,r16  /* Set our stack pointer to the new thread's */
+    out SPH,r17  /* stack pointer, from its TCB. */
 
     /**
      * On devices with large program space we also restore RAMPZ, EIND.
      */
 #ifdef __AVR_3_BYTE_PC__
     pop r0
-    in r0,_SFR_IO_ADDR(EIND)
+    in r0,EIND
     pop r0
-    in r0,_SFR_IO_ADDR(RAMPZ)
+    in r0,RAMPZ
 #endif
 
     /**

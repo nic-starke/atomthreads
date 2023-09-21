@@ -6,13 +6,17 @@ atomthreads_sources = files(
   'kernel/atomqueue.c',
   'kernel/atomsem.c',
   'kernel/atomtimer.c',
-  'ports/avr/atomport-private.c',
-  'ports/avr/atomport.c',
-  'ports/avr/atomport-asm.s'
+  'ports/avrxmega/atomport-private.c',
+  'ports/avrxmega/atomport.c',
+  'ports/avrxmega/atomport-asm.s'
 )
 
-add_project_arguments('-DATOM_STACK_CHECKING', language : 'c')
+compiler_args=[
+'-DATOM_STACK_CHECKING'
+]
 
-atomthreads_inc = include_directories('./kernel', './ports/avr', './tests')
+add_project_arguments(compiler_args , language : 'c')
+
+atomthreads_inc = include_directories('/usr/avr/include','./kernel', './ports/avrxmega', './tests')
 atomthreads_lib = library('atomthreads', atomthreads_sources, include_directories: atomthreads_inc)
 atomthreads_dep = declare_dependency(link_with : atomthreads_lib, include_directories : atomthreads_inc)
