@@ -8,11 +8,11 @@ atomthreads_sources = files(
   'kernel/atomtimer.c',
   'ports/avrxmega/atomport-private.c',
   'ports/avrxmega/atomport.c',
-  'ports/avrxmega/atomport-asm.s'
+  'ports/avrxmega/atomport-asm.S'
 )
 
 compiler_args=[
-'-DATOM_STACK_CHECKING'
+  '-DATOM_STACK_CHECKING',
 ]
 
 add_project_arguments(compiler_args , language : 'c')

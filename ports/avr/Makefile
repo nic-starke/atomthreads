@@ -103,7 +103,7 @@ $(APP_OBJECTS): %.o: ./%.c
 	$(CC) -c $(CFLAGS) -I. -I$(KERNEL_DIR) -I$(TESTS_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
 
 # Application asm objects builder
-$(APP_ASM_OBJECTS): %.o: ./%.s
+$(APP_ASM_OBJECTS): %.o: ./%.S
 	$(CC) -c $(CFLAGS) -x assembler-with-cpp -I. -I$(KERNEL_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
 
 # .lst file builder
