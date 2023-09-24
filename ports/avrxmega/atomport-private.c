@@ -14,49 +14,47 @@ static const uint16_t prescalers[] = {1, 2, 4, 8, 64, 256, 1024};
 /**
  * \b avrInitSystemTickTimer
  *
- * Initialise the system tick timer. TCC0 exists on all xmega platforms so it is used here.
+ * Initialise the system tick timer. TCC0 exists on all xmega platforms so it is
+ * used here.
  *
  * @return None
  */
-void avrInitSystemTickTimer(void)
-{
-    uint32_t clocks_per_tick = F_CPU / SYSTEM_TICKS_PER_SEC;
-    uint32_t per             = 0;
-    uint32_t lowest_error    = UINT32_MAX;
-    int16_t  best_prescaler  = -1;
-    uint16_t best_per        = 0;
+void avrInitSystemTickTimer(void) {
+  uint32_t clocks_per_tick = F_CPU / SYSTEM_TICKS_PER_SEC;
+  uint32_t per             = 0;
+  uint32_t lowest_error    = UINT32_MAX;
+  int16_t  best_prescaler  = -1;
+  uint16_t best_per        = 0;
 
-    for (int i = 0; i < NUM_PRESCALERS; i++)
-    {
-        per = clocks_per_tick / prescalers[i];
-        per--;
-        if (per > MAX_PER)
-            continue;
+  for (int i = 0; i < NUM_PRESCALERS; i++) {
+    per = clocks_per_tick / prescalers[i];
+    per--;
+    if (per > MAX_PER)
+      continue;
 
-        uint32_t error;
-        error = abs((int32_t)clocks_per_tick - (int32_t)((per + 1) * prescalers[i]));
-        if (error < lowest_error)
-        {
-            lowest_error   = error;
-            best_prescaler = prescalers[i];
-            best_per       = per;
-        }
+    uint32_t error;
+    error =
+        abs((int32_t)clocks_per_tick - (int32_t)((per + 1) * prescalers[i]));
+    if (error < lowest_error) {
+      lowest_error   = error;
+      best_prescaler = prescalers[i];
+      best_per       = per;
     }
+  }
 
-    // Storage status register, and disable interrupts
-    volatile uint8_t sreg = SREG;
-    cli();
+  // Storage status register, and disable interrupts
+  CRITICAL_STORE;
+  CRITICAL_START();
 
-    // Configure the timer with the best period and prescaler values.
-    TCC0.PER      = best_per;
-    TCC0.CTRLA    = best_prescaler;
-    TCC0.CTRLB    = TC_WGMODE_NORMAL_gc; // Use "normal mode"
-    TCC0.INTCTRLA = TC_OVFINTLVL_HI_gc;  // Overflow interrupt with high priority
-    TCC0.CNT      = 0;                   // Set starting count to 0
+  // Configure the timer with the best period and prescaler values.
+  TCE0.PER      = best_per;
+  TCE0.CTRLA    = best_prescaler;
+  TCE0.CTRLB    = TC_WGMODE_NORMAL_gc; // Use "normal mode"
+  TCE0.INTCTRLA = TC_OVFINTLVL_HI_gc;  // Overflow interrupt with high priority
+  TCE0.CNT      = 0;                   // Set starting count to 0
 
-    // Restore interrupts
-    _MemoryBarrier();
-    SREG = sreg;
+  // Restore interrupts
+  CRITICAL_END();
 }
 
 /**
@@ -88,16 +86,15 @@ void avrInitSystemTickTimer(void)
  *
  * @return None
  */
-ISR(TCC0_OVF_vect)
-{
-    /* Call the interrupt entry routine */
-    atomIntEnter();
+ISR(TCE0_OVF_vect) {
+  /* Call the interrupt entry routine */
+  atomIntEnter();
 
-    /* Call the OS system tick handler */
-    atomTimerTick();
+  /* Call the OS system tick handler */
+  atomTimerTick();
 
-    /* Call the interrupt exit routine */
-    atomIntExit(TRUE);
+  /* Call the interrupt exit routine */
+  atomIntExit(TRUE);
 }
 
 /**
@@ -112,7 +109,6 @@ ISR(TCC0_OVF_vect)
  *
  * @return None
  */
-ISR(BADISR_vect)
-{
-    /* Empty */
+ISR(BADISR_vect) {
+  /* Empty */
 }
